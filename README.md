@@ -6,14 +6,14 @@ A diff and a diff3 toolset I develop for my own education/enjoyment. It aims to 
 # Requirements:
  * Linux programming environment
  * cmake (>=3.10)
- * goolgetest
-   * only if intending to compile and run the tests
+ * libgtest-dev (>=1.8.0-6)
+   * only if intending to build and run the tests
    
 # Build and Installation:
  * Clone this repository to your local machine
  * cd /your/clone/directory
  * mkdir build && cd build
- * cmake -DCMAKE_INSTALL_PREFIX=/your/install/directory
+ * cmake -DCMAKE_INSTALL_PREFIX=/your/install/directory ..
  * make all install
  * you can now find the diff executable under /your/install/directory/bin/
  * you can now find the liblcs.so library under /your/install/directory/lib/
