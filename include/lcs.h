@@ -43,7 +43,7 @@ longestCommonSubsequence(const std::vector<token> &A, const std::vector<token> &
         std::iota(y.begin(), y.end(), 0);
         return {x, y};
     }
-    size_t end = 0;
+    size_t end;
     for(end = 0; (end < std::min({A.size(), B.size()})) && (A.at(A.size() - 1 - end) == B.at(B.size() - 1 - end)); end++);
     size_t Aend = A.size() - end;
     size_t Bend = B.size() - end;

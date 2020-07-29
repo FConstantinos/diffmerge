@@ -9,12 +9,25 @@
 #include<string>
 #include<exception>
 #include<unordered_map>
+#include<experimental/filesystem> // TODO: do away with "experimental" for C++17 and g++ 8+
 
 #include "lcs.h"
 
 
 using namespace std;
 using namespace LCS;
+namespace fs = experimental::filesystem;
+
+// Checks a files exists in the filesystem
+bool file_exists(const fs::path& p, fs::file_status s = fs::file_status{}) {
+    if (fs::status_known(s) ? fs::exists(s) : fs::exists(p)) {
+        return true;
+    }
+    else {
+        cout << "diff: " << p << ": No such file or directory" << endl;
+        return false;
+    }
+}
 
 // Parses file to a vector of strings representing the lines of the file.
 // On failure, a runtime_error exception is thrown that indicates the error.
@@ -55,12 +68,12 @@ vector<string> parse_file(const string &filename) {
             seq.push_back(move(line));
         }
     } catch(const exception &e) {
-        throw runtime_error("Exception reading or parsing file " + filename + ": " + e.what());
         finalize();
+        throw runtime_error("Exception reading or parsing file " + filename + ": " + e.what());
     }
     finalize();
     return seq;
-};
+}
 
 int main(int argc, char** argv) {
 
@@ -86,6 +99,13 @@ int main(int argc, char** argv) {
     const unordered_map<ID, string> filename = {{ID::from, argv[1]}, {ID::to  , argv[2]}};
     unordered_map<ID, vector<string>> seq = {{ID::from, vector<string>()}, {ID::to  , vector<string>()} };
     unordered_map<ID, vector<size_t>> lcsIdx = {{ID::from, vector<size_t>()}, {ID::to  , vector<size_t>()} };
+
+    // check the files exist:
+    const bool from_exists = file_exists(filename.at(ID::from));
+    const bool to_exists = file_exists(filename.at(ID::to));
+    if(! ( from_exists && to_exists )) {
+        return 1;
+    }
 
     // return if it's the same file:
     if(filename.at(ID::from) == filename.at(ID::to)) {
@@ -119,7 +139,6 @@ int main(int argc, char** argv) {
     unordered_map<ID, size_t> sdx = {{ID::from, 0}, {ID::to, 0}}; // indexes on the sequences
     unordered_map<ID, string> direction = {{ID::from, "< "}, {ID::to, "> "}};
     unordered_map<ID, string> op = {{ID::from, "d"}, {ID::to, "a"}};
-    size_t ldx; // index that iterates over the lcs
 
     // This will print the operation for the lines between init.at(id) inclusive and end exclusive
     auto print = [&](const unordered_map<ID, size_t> &init, const size_t &end, const ID &id) {

@@ -46,7 +46,7 @@ add_executable(diff
 	src/diffmain.cc
 	)
 	
-target_link_libraries(diff lcs)
+target_link_libraries(diff lcs stdc++fs)
 
 install(TARGETS diff
     RUNTIME
